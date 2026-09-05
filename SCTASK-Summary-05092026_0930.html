@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>vSpace SCTASK Report - 05/09/2026 09:30</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b1120;
+  --surface: #1e293b;
+  --surface-hover: #334155;
+  --border: #334155;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent: #38bdf8;
+  --purple: #c084fc;
+  --amber: #fbbf24;
+  --rose: #fb7185;
+  --emerald: #34d399;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Prompt', sans-serif;
+  background: var(--bg);
+  color: var(--text-main);
+  padding: 1rem;
+  line-height: 1.5;
+}
+.container { max-width: 1250px; margin: 0 auto; }
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+.header h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.header .badge {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.header .time { font-size: 0.8rem; color: var(--text-muted); }
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.m-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.m-card .label { font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; }
+.m-card .val { font-size: 1.7rem; font-weight: 700; }
+.m-card .hint { font-size: 0.75rem; color: var(--text-muted); }
+
+.filters-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.filter-title { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.btn-group { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.btn-filter {
+  background: #0f172a;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.btn-filter:hover { background: var(--surface-hover); color: #fff; }
+.btn-filter.active { background: var(--accent); color: #0f172a; font-weight: 600; border-color: var(--accent); }
+
+.reason-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.reason-card.apt { border-left: 4px solid var(--emerald); }
+.reason-card.postpone { border-left: 4px solid var(--amber); }
+.reason-card.project { border-left: 4px solid var(--purple); }
+
+.reason-header {
+  padding: 0.9rem 1.1rem;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.reason-name { font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 0.4rem; }
+.reason-count { font-size: 0.8rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 6px; }
+.badge-apt { background: rgba(52, 211, 153, 0.2); color: var(--emerald); }
+.badge-postpone { background: rgba(251, 191, 36, 0.2); color: var(--amber); }
+.badge-project { background: rgba(192, 132, 252, 0.2); color: var(--purple); }
+
+.ticket-list { display: flex; flex-direction: column; }
+.ticket-row {
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.ticket-row:hover { background: rgba(255,255,255,0.02); }
+.ticket-row:last-child { border-bottom: none; }
+.ticket-row.hidden { display: none !important; }
+
+.row-main {
+  display: grid;
+  grid-template-columns: 210px 1.3fr 1.1fr 170px auto;
+  gap: 0.8rem;
+  align-items: center;
+}
+.t-inc { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: var(--accent); }
+.t-date { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem; }
+.t-days { font-size: 0.75rem; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 600; display: inline-block; }
+.days-green { background: rgba(52, 211, 153, 0.15); color: var(--emerald); }
+.days-yellow { background: rgba(251, 191, 36, 0.15); color: var(--amber); }
+.days-red { background: rgba(251, 113, 133, 0.15); color: var(--rose); }
+
+.st-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-left: 0.25rem;
+}
+.st-pending { background: rgba(251, 191, 36, 0.2); color: var(--amber); }
+.st-inprogress { background: rgba(56, 189, 248, 0.2); color: var(--accent); }
+
+.t-cat { font-size: 0.85rem; font-weight: 500; color: #fff; }
+.t-device { font-size: 0.75rem; color: var(--text-muted); }
+
+.t-branch { font-size: 0.85rem; color: #e2e8f0; }
+.branch-file { color: var(--purple); font-weight: 600; }
+.t-center { font-size: 0.8rem; color: #38bdf8; font-weight: 500; }
+
+.toggle-icon {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  user-select: none;
+}
+.ticket-row.open .toggle-icon { transform: rotate(180deg); color: var(--accent); }
+
+.summary-box {
+  display: none;
+  margin-top: 0.8rem;
+  padding: 0.8rem 1rem;
+  background: #0f172a;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  line-height: 1.6;
+  animation: fadeIn 0.2s ease;
+}
+.ticket-row.open .summary-box { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 850px) {
+  .row-main { grid-template-columns: 1fr; gap: 0.4rem; }
+  .toggle-icon { display: flex; justify-content: flex-end; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="title-row">
+      <h1>📋 vSpace SCTASK Dashboard</h1>
+      <span class="badge">SRM • AI Summary</span>
+    </div>
+    <div class="time">อัปเดตล่าสุด: 05/09/2026 09:30 น. | ข้อมูลจาก vSpace API</div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="m-card">
+      <div class="label">SCTASK ทั้งหมด <span>📦</span></div>
+      <div class="val" style="color:#38bdf8">28</div>
+      <div class="hint">Active Request ทั้งหมดในระบบ</div>
+    </div>
+
+    <div class="m-card">
+      <div class="label">อยู่ระหว่างดำเนินการ... <span>🗓️</span></div>
+      <div class="val" style="color:#34d399">15</div>
+      <div class="hint">คิดเป็น 53.6% ของงานทั้งหมด</div>
+    </div>
+    
+    <div class="m-card">
+      <div class="label">อยู่ระหว่างดำเนินการ... <span>🏗️</span></div>
+      <div class="val" style="color:#c084fc">9</div>
+      <div class="hint">คิดเป็น 32.1% ของงานทั้งหมด</div>
+    </div>
+    
+    <div class="m-card">
+      <div class="label">User เลื่อนนัด... <span>⏳</span></div>
+      <div class="val" style="color:#fbbf24">4</div>
+      <div class="hint">คิดเป็น 14.3% ของงานทั้งหมด</div>
+    </div>
+    
+  </div>
+
+  <div class="filters-wrap">
+    <div>
+      <div class="filter-title">⚡ เลือกเฉพาะ Pending Reason ที่ต้องการดู</div>
+      <div class="btn-group" id="reason-filter-btns">
+        <button class="btn-filter active" data-r="all">ทั้งหมด (28)</button>
+
+        <button class="btn-filter" data-r="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )">🗓️ อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM ) (15)</button>
+    
+        <button class="btn-filter" data-r="อยู่ระหว่างดำเนินการตาม Project ( SRM )">🏗️ อยู่ระหว่างดำเนินการตาม Project ( SRM ) (9)</button>
+    
+        <button class="btn-filter" data-r="User เลื่อนนัด">⏳ User เลื่อนนัด (4)</button>
+    
+      </div>
+    </div>
+  </div>
+
+  <div class="reason-container">
+
+    <div class="reason-card apt" data-reason="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )">
+      <div class="reason-header">
+        <div class="reason-name">🗓️ อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )</div>
+        <span class="reason-count badge-apt">15 งาน (แตะที่แถวเพื่อดูสรุปงาน)</span>
+      </div>
+      <div class="ticket-list">
+    
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1452545 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-05 15:21</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-yellow">⏱ 30 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">Remove (Inactive/Renovate/Relocate)</div>
+              <div class="t-device">Network for Branch and FX Booth Request</div>
+            </div>
+            <div>
+              <div class="t-branch branch-file">📁 มีหลายสาขา (สาขา9-Sep-26.xlsx)</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 📁 [มีหลายสาขา / แนบไฟล์]</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> Remove (Inactive/Renovate/Relocate)<br>👤 <b>ผู้ประสานงาน:</b> วีรพงษ์ เบอร์ติดต่อ 0816551080 (โทร 14525)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-05 16:10] Worklog from ServiceNow, Add Attachment: NAC ISE Remove IP Switch Branch 2 สาขา 9-Sep-26.xlsx
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1458096 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-10 15:19</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-yellow">⏱ 25 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขอ Replaceเครือง ทดแทน เครื่องหมดอายุการใช้งาน</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาชะอำ	ศูนย์เพชรบุรี	นัด 4</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์เพชรบุรี</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขอ Replaceเครือง ทดแทน เครื่องหมดอายุการใช้งาน<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-10 16:32] Pending Reason: อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM ) Worklog: อยู่ระหว่างจัดสรร Notebook KV 10 ชุด วันที่ 11-14/8/2026 ครับ / เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1476418 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-26 11:36</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 9 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขอเครื่องใช้งานสำหรับพนักงานใหม่</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาเดอะมอลล์ นครราชสีมา</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์นครราชสีมา</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขอเครื่องใช้งานสำหรับพนักงานใหม่<br>👤 <b>ผู้ประสานงาน:</b> Ekaphan Donavanik ทีม Endpoint (โทร 14764)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-31 17:01] Case was automatically Work In Progress. From Expect Pending Finish 2026-08-31 17:00:00 (Done 2026-08-31 17:00:01)
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1477796 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-27 10:47</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 8 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขออุปกรณ์ (Accessory)</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาถนนบรมไตรโลกนารถ พิษณุโลก</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์พิษณุโลก</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขออุปกรณ์ (Accessory)<br>👤 <b>ผู้ประสานงาน:</b> ภาพสินทรัพย์ ถนนบรมไตรโลกนารถ (โทร 14777)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-31 17:02] Case was automatically Work In Progress. From Expect Pending Finish 2026-08-31 17:00:00 (Done 2026-08-31 17:00:01)
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1479058 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-28 10:38</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 7 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขออุปกรณ์ (Accessory)</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาสี่แยกวังหิน</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์รามอินทรา</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขออุปกรณ์ (Accessory)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-02 17:01] Case was automatically Work In Progress. From Expect Pending Finish 2026-09-02 17:00:00 (Done 2026-09-02 17:00:01)
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1479051 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-28 10:36</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 7 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขออุปกรณ์ (Accessory)</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาถนนพรหมเทพ อุบลราชธานี</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์อุบลราชธานี</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขออุปกรณ์ (Accessory)<br>👤 <b>ผู้ประสานงาน:</b> Sutinan Promsit  เบอร์ 0807620 (โทร 0807620431)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-02 17:01] Case was automatically Work In Progress. From Expect Pending Finish 2026-09-02 17:00:00 (Done 2026-09-02 17:00:01)
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1484072 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-01 16:54</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 3 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขออุปกรณ์ (Accessory)</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขามาร์เก็ต วิลเลจ สุวรรณภูมิ</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์สมุทรปราการ</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขออุปกรณ์ (Accessory)<br>👤 <b>ผู้ประสานงาน:</b> สุกัลยา คำมณีจันทร์ โทร. 082-3 (โทร 14840)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-01 17:49] หยุด Pending เพราะมีการเวลาเปลี่ยน Pending
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1483588 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-01 13:46</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 3 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขอ Upgrade Spec เครืองคอมพิวเตอร์</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาหัวทะเล นครราชสีมา</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์นครราชสีมา</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขอ Upgrade Spec เครืองคอมพิวเตอร์<br>👤 <b>ผู้ประสานงาน:</b> Nhamfon Tipviroj เบอร์  093486 (โทร 0934867778)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-01 15:51] Pending Reason: อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM ) Worklog: อยู่ระหว่างจัดสรร Notebook PHR 1 ชุด วันที่ 2-4/9/2026 / เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1483587 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-01 13:46</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 3 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขออุปกรณ์ (Accessory)</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาสี่แยกสะพานกรุงเทพ</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์สมุทรปราการ</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขออุปกรณ์ (Accessory)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-04 17:01] Case was automatically Work In Progress. From Expect Pending Finish 2026-09-04 17:00:00 (Done 2026-09-04 17:00:01)
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1486315 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-03 07:59</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 2 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">คืนเครื่องคอมพิวเตอร์/อุปกรณ์</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาติวานนท์ 8</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์รามอินทรา</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> คืนเครื่องคอมพิวเตอร์/อุปกรณ์<br>👤 <b>ผู้ประสานงาน:</b> Panida Thongsang  เบอร์ 087414 (โทร 0874144151)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-03 10:39] Pending Reason: อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM ) Worklog: แจ้งงานศูนย์ช่าง P&P โซนศูนย์รามอินทรารับทราบครับ นัดเข้าดำเนินการวันที่  7/9/2026 / เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1485890 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-02 16:58</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 2 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">คืนเครื่องคอมพิวเตอร์/อุปกรณ์</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาถนนมิตรภาพ ขอนแก่น</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์ขอนแก่น</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> คืนเครื่องคอมพิวเตอร์/อุปกรณ์<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-02 17:24] หยุด Pending เพราะมีการเวลาเปลี่ยน Pending
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1485583 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-02 15:47</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 2 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขอย้ายจุดติดตั้งคอมพิวเตอร์(ย้าย Location)/ IP Phone</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาปิดให้บริการลูกค้า) ผู้ประสานงาน คุ</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์นครราชสีมา</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขอย้ายจุดติดตั้งคอมพิวเตอร์(ย้าย Location)/ IP Phone<br>👤 <b>ผู้ประสานงาน:</b> ไพบูลย์ เบอร์ติดต่อ 081 655 04 (โทร 14855)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-02 17:21] Pending Reason: อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM ) Worklog: แจ้งงานศูนย์ช่าง P&P โซนศูนย์นครราชสีมารับทราบครับ นัดเข้าดำเนินการวันที่ 7/9/2026 / เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1486674 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-03 10:46</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 1 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">คืนเครื่องคอมพิวเตอร์/อุปกรณ์</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาโรบินสัน สมุทรปราการ</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์สมุทรปราการ</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> คืนเครื่องคอมพิวเตอร์/อุปกรณ์<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-03 11:46] Pending Reason: อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM ) Worklog: แจ้งงานศูนย์ช่าง P&P โซนศูนย์สมุทรปราการรับทราบครับ นัดเข้าดำเนินการวันที่  7/9/2026 / เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1488120 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-04 11:10</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 0 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">คืนเครื่องคอมพิวเตอร์/อุปกรณ์</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาบิ๊กซี พิษณุโลก</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์พิษณุโลก</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> คืนเครื่องคอมพิวเตอร์/อุปกรณ์<br>👤 <b>ผู้ประสานงาน:</b> Attaplon Rodkumpitipat เบอร์ 0 (โทร 0816550346)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-04 14:25] Pending Reason: อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM ) Worklog: แจ้งงานศูนย์ช่าง P&P โซนศูนย์พิษณุโลกรับทราบครับ นัดเข้าดำเนินการวันที่ 9/9/2026 / เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1487961 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-04 10:14</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 0 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">คืนเครื่องคอมพิวเตอร์/อุปกรณ์</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาไอที สแควร์</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์รามอินทรา</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> คืนเครื่องคอมพิวเตอร์/อุปกรณ์<br>👤 <b>ผู้ประสานงาน:</b> วิศรุต จำปาแก้ว  ผู้ช่วยผู้จัด (โทร 14879)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-04 10:30] Pending Reason: อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM ) Worklog: แจ้งงานศูนย์ช่าง P&P โซนศูนย์รามอินทรารับทราบครับ นัดเข้าดำเนินการวันที่  8/9/2026 / เอกสิทธิ์
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="reason-card project" data-reason="อยู่ระหว่างดำเนินการตาม Project ( SRM )">
+      <div class="reason-header">
+        <div class="reason-name">🏗️ อยู่ระหว่างดำเนินการตาม Project ( SRM )</div>
+        <span class="reason-count badge-project">9 งาน (แตะที่แถวเพื่อดูสรุปงาน)</span>
+      </div>
+      <div class="ticket-list">
+    
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตาม Project ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1458788 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-11 08:35</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-yellow">⏱ 25 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">Remove (Inactive/Renovate/Relocate)</div>
+              <div class="t-device">Network for Branch and FX Booth Request</div>
+            </div>
+            <div>
+              <div class="t-branch branch-file">📁 มีหลายสาขา (สาขา16-Sep-26.xlsx)</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 📁 [มีหลายสาขา / แนบไฟล์]</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> Remove (Inactive/Renovate/Relocate)<br>👤 <b>ผู้ประสานงาน:</b> จิรเชฏฐ์  เบอร์ติดต่อ 08749618 (โทร 14587)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตาม Project ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-11 12:00] กำลังตรวจสอบครับ / เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตาม Project ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1465692 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-17 14:17</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-yellow">⏱ 18 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">On Site Support</div>
+              <div class="t-device">Other Support Request</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาอาคารปลอดอากร สุวรรณภูมิ ไปยังสาขาล</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์สมุทรปราการ</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> On Site Support<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตาม Project ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-17 16:35] Pending Reason: อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM ) Worklog: รอ IT จากทีม Network ครับ
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตาม Project ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1467999 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-19 08:03</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-yellow">⏱ 17 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">Remove (Inactive/Renovate/Relocate)</div>
+              <div class="t-device">Network for Branch and FX Booth Request</div>
+            </div>
+            <div>
+              <div class="t-branch branch-file">📁 มีหลายสาขา (สาขา23-Sep-26.xlsx)</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 📁 [มีหลายสาขา / แนบไฟล์]</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> Remove (Inactive/Renovate/Relocate)<br>👤 <b>ผู้ประสานงาน:</b> วีรพงษ์ เบอร์ติดต่อ 0816551080 (โทร 14679)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตาม Project ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-19 16:47] Worklog from ServiceNow, Add Attachment: Template BR0497, BR0695, BR0348  NMS Request Delete Device V1.0 solarwinds 1.xlsx
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตาม Project ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1479044 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-28 12:30</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 7 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ทั่วไป</div>
+              <div class="t-device">Service</div>
+            </div>
+            <div>
+              <div class="t-branch branch-file">📁 มีหลายสาขา (สาขาจำนวน 12 เครื่อง\\saroj.pu)</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 📁 [มีหลายสาขา / แนบไฟล์]</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> On Site Support : ขอความช่วยเหลือจากทีม IT (Remote, On Site)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตาม Project ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-28 14:16] Pending Reason: อยู่ระหว่างดำเนินการตาม Project ( SRM ) Worklog: แจ้งงานศูนย์ช่าง P&P ทุกศูนย์รับทราบครับ นัดเข้าดำเนินการวันที่ 2/9/2026 / เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตาม Project ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1481536 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-31 11:10</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 4 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">On Site Support</div>
+              <div class="t-device">Other Support Request</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 Progress Appraisal Co., Ltd. (ไม่ระบุ)</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ส่วนกลาง / ไม่ระบุศูนย์</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> On Site Support<br>👤 <b>ผู้ประสานงาน:</b> Pattaraporn Pattanawanichnan เ (โทร 0873358670)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตาม Project ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-31 15:23] กำลังตรวจสอบครับ / เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตาม Project ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1483696 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-01 14:50</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 3 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">Remove (Inactive/Renovate/Relocate)</div>
+              <div class="t-device">Network for Branch and FX Booth Request</div>
+            </div>
+            <div>
+              <div class="t-branch branch-file">📁 มีหลายสาขา (สาขา7-Oct-26.xlsx)</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 📁 [มีหลายสาขา / แนบไฟล์]</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> Remove (Inactive/Renovate/Relocate)<br>👤 <b>ผู้ประสานงาน:</b> วีรพงษ์ เบอร์ติดต่อ 0816551080 (โทร 14836)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตาม Project ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-01 16:57] Worklog from ServiceNow, Add Attachment: NAC ISE Remove IP Switch Branch 2 สาขา 7-Oct-26.xlsx
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตาม Project ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1483457 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-01 12:15</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 3 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">On Site Support</div>
+              <div class="t-device">Other Support Request</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาห้าแยกโคกมะตูม  ชั้น 3</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์พิษณุโลก</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> On Site Support<br>👤 <b>ผู้ประสานงาน:</b> ภาพสินทรัพย์ (โทร 14834)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตาม Project ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-01 13:44] Pending Reason: อยู่ระหว่างดำเนินการตาม Project ( SRM ) Worklog: "แจ้งงานศูนย์ช่าง P&P โซนศูนย์พิษณุโลกรับทราบครับ นัดเข้าดำเนินการวันที่ 18-19/9/2026 / เอกสิทธิ์
+"
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตาม Project ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1486847 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-04 08:59</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 1 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ทั่วไป</div>
+              <div class="t-device">Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาถนนมิตรภาพ ขอนแก่น  398</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์ขอนแก่น</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> On Site Support : ขอความช่วยเหลือจากทีม IT (Remote, On Site)<br>👤 <b>ผู้ประสานงาน:</b> ภาพสินทรัพย์ (โทร 14868)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตาม Project ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-04 09:27] Pending Reason: อยู่ระหว่างดำเนินการตาม Project ( SRM ) Worklog: แจ้งงานศูนย์ช่าง P&P โซนศูนย์อุดรธานีรับทราบครับ นัดเข้าดำเนินการวันที่ 19/9/2026 / เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="อยู่ระหว่างดำเนินการตาม Project ( SRM )" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1488560 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-04 16:02</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 0 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">On Site Support</div>
+              <div class="t-device">Other Support Request</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาถนนแจ้งวัฒนะ ชั้น 1</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์รามอินทรา</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> On Site Support<br>👤 <b>ผู้ประสานงาน:</b> Ekaphan Donavanik สำหรับการทดส (โทร 14885)<br>⏳ <b>Pending Reason:</b> อยู่ระหว่างดำเนินการตาม Project ( SRM )<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-04 16:29] หยุด Pending เพราะมีการเวลาเปลี่ยน Pending
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="reason-card postpone" data-reason="User เลื่อนนัด">
+      <div class="reason-header">
+        <div class="reason-name">⏳ User เลื่อนนัด</div>
+        <span class="reason-count badge-postpone">4 งาน (แตะที่แถวเพื่อดูสรุปงาน)</span>
+      </div>
+      <div class="ticket-list">
+    
+        <div class="ticket-row" data-r-item="User เลื่อนนัด" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1475521 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-25 17:36</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 10 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขอติดตั้งเครืองพนักงานย้ายฝ่าย/เลื่อนตำแหน่ง</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาอนุสาวรีย์ชัยสมรภูมิ สังกัดทีมใหม่</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์รามอินทรา</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขอติดตั้งเครืองพนักงานย้ายฝ่าย/เลื่อนตำแหน่ง<br>👤 <b>ผู้ประสานงาน:</b> Nanwadee Kulladit  เบอร์ 08029 (โทร 0802973854)<br>⏳ <b>Pending Reason:</b> User เลื่อนนัด<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-26 11:41] หยุด Pending เพราะมีการเวลาเปลี่ยน Pending
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="User เลื่อนนัด" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1476427 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-26 11:38</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 9 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขอจัดสรรเครื่องคอมพิวเตอร์ Project</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาผช.จันจิรา ติยะเกษม เบอร์ติดต่อ 093</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์อุดรธานี</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขอจัดสรรเครื่องคอมพิวเตอร์ Project<br>👤 <b>ผู้ประสานงาน:</b> Verayuth Khongkhasurichai  เบอ (โทร 0816550700)<br>⏳ <b>Pending Reason:</b> User เลื่อนนัด<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-26 16:17] Pending Reason: อยู่ระหว่างดำเนินการตามนัดหมาย ( SRM ) Worklog: อยู่ระหว่างจัดสรร Desktop พร้อมอุปกรณ์ Teller 1 ชุด ติดตั้ง 1/9/2026/ เอกสิทธิ์
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="User เลื่อนนัด" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1477883 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-08-27 11:28</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 8 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">ขออุปกรณ์ (Accessory)</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขาเดชอุดม</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์อุบลราชธานี</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> ขออุปกรณ์ (Accessory)<br>⏳ <b>Pending Reason:</b> User เลื่อนนัด<br>📝 <b>Worklog ล่าสุด:</b> [2026-08-31 16:35] หยุด Pending เพราะมีการเวลาเปลี่ยน Pending
+          </div>
+        </div>
+        
+        <div class="ticket-row" data-r-item="User เลื่อนนัด" onclick="this.classList.toggle('open')">
+          <div class="row-main">
+            <div>
+              <div class="t-inc">SCTASK1484943 <span class="st-badge st-pending">Pending</span></div>
+              <div class="t-date">📅 สร้าง: 2026-09-02 10:36</div>
+              <div style="margin-top:0.2rem;"><span class="t-days days-green">⏱ 2 วัน</span></div>
+            </div>
+            <div>
+              <div class="t-cat">คืนเครื่องคอมพิวเตอร์/อุปกรณ์</div>
+              <div class="t-device">Hardware Service</div>
+            </div>
+            <div>
+              <div class="t-branch ">📍 สาขามุกดาหาร</div>
+            </div>
+            <div>
+              <div class="t-center">🏢 ศูนย์อุบลราชธานี</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="summary-box" onclick="event.stopPropagation()">
+            <div style="font-weight:600;color:var(--accent);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              🤖 สรุปข้อมูลงาน & Worklog ล่าสุด:
+            </div>
+            📌 <b>งาน:</b> คืนเครื่องคอมพิวเตอร์/อุปกรณ์<br>⏳ <b>Pending Reason:</b> User เลื่อนนัด<br>📝 <b>Worklog ล่าสุด:</b> [2026-09-04 17:01] Case was automatically Work In Progress. From Expect Pending Finish 2026-09-04 17:00:00 (Done 2026-09-04 17:00:01)
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+let activeR = 'all';
+
+function filterReasons() {
+  document.querySelectorAll('.reason-card').forEach(card => {
+    const cardReason = card.dataset.reason;
+    const isMatch = activeR === 'all' || cardReason === activeR;
+    card.style.display = isMatch ? '' : 'none';
+  });
+}
+
+document.querySelectorAll('#reason-filter-btns .btn-filter').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#reason-filter-btns .btn-filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeR = btn.dataset.r;
+    filterReasons();
+  });
+});
+</script>
+</body>
+</html>
