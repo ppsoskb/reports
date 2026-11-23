@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📋 vSpace — สรุปงานประจำวัน — 23/11/2026</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, 'Segoe UI', 'Noto Sans Thai', sans-serif;
+      background: #0f172a; color: #e2e8f0;
+      padding: 1rem 0.75rem; line-height: 1.5;
+    }
+    .container { max-width: 960px; margin: 0 auto; }
+    h1 {
+      font-size: 1.2rem; font-weight: 700; color: #f1f5f9;
+      text-align: center; padding-bottom: 0.5rem;
+      border-bottom: 1px solid #1e293b; margin-bottom: 0.75rem;
+    }
+    .report-date { text-align: center; color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.25rem; }
+    .report-subtitle { text-align: center; color: #64748b; font-size: 0.75rem; margin-bottom: 0.75rem; }
+
+    /* Filter bars */
+    .filter-section { position: sticky; top: 0; z-index: 10; background: #0f172a; padding: 0.4rem 0; }
+    .filter-label { font-size: 0.65rem; color: #64748b; margin-bottom: 0.15rem; padding-left: 0.25rem; }
+    .filter-bar {
+      display: flex; gap: 0.35rem; overflow-x: auto; padding-bottom: 0.3rem;
+      scrollbar-width: thin; scrollbar-color: #334155 transparent;
+    }
+    .filter-bar::-webkit-scrollbar { height: 3px; }
+    .filter-bar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    .filter-btn {
+      flex-shrink: 0; padding: 0.25rem 0.6rem; border-radius: 999px;
+      border: 1px solid #334155; background: transparent; color: #94a3b8;
+      font-size: 0.72rem; font-weight: 500; cursor: pointer;
+      transition: all .15s; white-space: nowrap; font-family: inherit;
+    }
+    .filter-btn:hover { background: #1e293b; color: #e2e8f0; }
+    .filter-btn.active {
+      background: var(--btn-color, #3b82f6); border-color: var(--btn-color, #3b82f6);
+      color: #fff; font-weight: 600;
+    }
+
+    /* Center filter panel (compact wrap chips) */
+    .center-panel {
+      background: #1e293b; border: 1px solid #334155; border-radius: 0.75rem;
+      padding: 0.55rem 0.7rem; margin-top: 0.45rem;
+    }
+    .center-panel.hidden { display: none; }
+    .center-chip-wrap {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      overflow-x: visible; padding-bottom: 0;
+    }
+    .center-chip-wrap .filter-btn {
+      flex-shrink: 1; padding: 0.28rem 0.7rem; font-size: 0.78rem;
+      line-height: 1.25; white-space: normal; text-align: center;
+    }
+
+    /* Center Card Grid */
+    .center-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem;
+    }
+    .center-card {
+      background: linear-gradient(135deg, #1e293b, #1a2235);
+      border-radius: 0.75rem; padding: 0.75rem 0.8rem;
+      border: 1px solid #2d3a50;
+      border-top: 3px solid var(--card-accent, #3b82f6);
+      transition: border-color .15s;
+    }
+    .center-card:hover { border-color: #4a5a78; }
+    .center-card.hidden { display: none; }
+    .center-bar.hidden { display: none; }
+    .center-filter-label.hidden { display: none; }
+    .ticket-row.hidden { display: none; }
+    .filter-btn.hidden { display: none; }
+    .ship-sub.hidden { display: none; }
+    .card-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 0.5rem; margin-bottom: 0.5rem;
+    }
+    .ctr-name { font-size: 0.9rem; font-weight: 700; color: #f1f5f9; flex:1; min-width:0; word-break:break-word; }
+    .ctr-badge {
+      background: var(--card-accent, #3b82f6); color: #fff;
+      font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.5rem;
+      border-radius: 999px; white-space: nowrap; flex-shrink: 0;
+    }
+    .copy-btn {
+      background: #0f172a; border: 1px solid #475569; color: #60a5fa;
+      font-size: 0.68rem; padding: 0.25rem 0.6rem; border-radius: 0.5rem;
+      cursor: pointer; font-family: inherit; font-weight: 500; transition: all .15s;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .copy-btn:hover { background: #1e3a8a; color: #fff; border-color: #3b82f6; }
+    .copy-btn.copied { background: #065f46; color: #a7f3d0; border-color: #10b981; }
+    .ticket-list { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    /* Ticket row */
+    .ticket-row {
+      border-top: 1px dashed #2d3a50; padding-top: 0.4rem;
+    }
+    .ticket-row:first-child { border-top: none; padding-top: 0; }
+    .ticket-row .inc-line {
+      display: flex; justify-content: space-between; align-items: center; gap: 0.3rem; margin-bottom: 0.15rem;
+    }
+    .ticket-row .incs {
+      font-family: 'SF Mono', 'Consolas', monospace; font-weight: 700;
+      font-size: 0.75rem; color: #93c5fd; word-break: break-all;
+    }
+    .ticket-row .days-badge {
+      background: #334155; border-radius: 999px; padding: 0.08rem 0.45rem;
+      font-size: 0.65rem; font-weight: 600; color: #93c5fd; white-space: nowrap;
+    }
+    .ticket-row .status-badge {
+      border-radius: 999px; padding: 0.05rem 0.4rem; font-size: 0.62rem;
+      font-weight: 600; white-space: nowrap;
+    }
+    .ticket-row .branch { color: #cbd5e1; font-size: 0.75rem; margin-top: 0.1rem; }
+    .ticket-row .symptom { color: #fbbf24; font-size: 0.75rem; font-weight: 500; margin-top: 0.08rem; }
+    .ticket-row .shipped { color: #94a3b8; font-size: 0.7rem; margin-top: 0.1rem; }
+    .ticket-row .shipped a { color: #60a5fa; text-decoration: underline; }
+
+    /* Shipping sub-sections */
+    .ship-sub { margin-top: 0.4rem; }
+    .ship-sub-hdr {
+      font-size: 0.72rem; font-weight: 600; color: #cbd5e1;
+      padding: 0.2rem 0; margin-bottom: 0.2rem;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .footer-note {
+      text-align: center; margin-top: 1.5rem; padding-top: 0.75rem;
+      border-top: 1px solid #1e293b; font-size: 0.75rem; color: #64748b;
+    }
+    .empty-msg { text-align: center; padding: 2rem; color: #94a3b8; font-size: 0.9rem; }
+
+    /* Copy modal */
+    .copy-modal {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      z-index: 100; align-items: center; justify-content: center;
+    }
+    .copy-modal.show { display: flex; }
+    .copy-modal-box {
+      background: #1e293b; border: 1px solid #475569; border-radius: 0.75rem;
+      padding: 1rem; max-width: 500px; width: 90%;
+    }
+    .copy-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .copy-modal-title { color: #e2e8f0; font-weight: 600; font-size: 0.85rem; }
+    .copy-modal-close { background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; }
+    .copy-modal-hint { color: #f59e0b; font-size: 0.7rem; margin-bottom: 0.5rem; }
+    .copy-modal-text {
+      width: 100%; height: 200px; background: #0f172a; color: #e2e8f0;
+      border: 1px solid #334155; border-radius: 0.5rem; padding: 0.5rem;
+      font-family: 'SF Mono', 'Consolas', monospace; font-size: 0.75rem; resize: vertical; margin-bottom: 0.5rem;
+    }
+    .copy-modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+    .copy-modal-btn {
+      padding: 0.3rem 0.75rem; border-radius: 0.5rem; border: 1px solid #475569;
+      background: #1e293b; color: #e2e8f0; font-size: 0.75rem; cursor: pointer; font-family: inherit;
+    }
+    .copy-modal-btn.primary { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+
+    @media (max-width: 720px) {
+      .center-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      body { padding: 0.75rem 0.5rem; }
+      .ticket-row .incs { font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📋 vSpace — สรุปงานประจำวัน</h1>
+  <div class="report-date">23/11/2026 11:30 น.</div>
+  <div class="report-subtitle">รวม 73 งาน</div>
+
+  <div class="filter-section">
+    <div class="filter-label">🔍 สถานะ</div>
+    <div class="filter-bar status-bar">
+      <button class="filter-btn status-btn active" data-status="all">🏢 ทั้งหมด (73)</button>
+      <button class="filter-btn status-btn" data-status="pending" style="--btn-color:#f59e0b">⏳ Pending (65)</button>
+      <button class="filter-btn status-btn" data-status="inprogress" style="--btn-color:#10b981">🔄 Inprogress (8)</button>
+    </div>
+    <div class="center-panel hidden">
+      <div class="filter-label center-filter-label">🔍 ศูนย์บริการ</div>
+      <div class="filter-bar center-bar center-chip-wrap">
+        <button class="filter-btn center-btn active" data-center="all" data-label="🏢 ทั้งหมด" data-count-all="73" data-count-pending="65" data-count-inprogress="8" data-count-shipping="50">🏢 ทั้งหมด (73)</button>
+      <button class="filter-btn center-btn" data-center="📦 งานจัดส่งอุปกรณ์" data-label="📦 งานจัดส่งอุปกรณ์" data-count-all="50" data-count-pending="50" data-count-inprogress="0" data-count-shipping="50" style="--btn-color:#3b82f6">📦 งานจัดส่งอุปกรณ์ (50)</button>
+      <button class="filter-btn center-btn" data-center="รามอินทรา" data-label="🏢 รามอินทรา" data-count-all="6" data-count-pending="4" data-count-inprogress="2" data-count-shipping="0" style="--btn-color:#10b981">🏢 รามอินทรา (6)</button>
+      <button class="filter-btn center-btn" data-center="ภูเก็ต" data-label="🏢 ภูเก็ต" data-count-all="5" data-count-pending="5" data-count-inprogress="0" data-count-shipping="0" style="--btn-color:#f59e0b">🏢 ภูเก็ต (5)</button>
+      <button class="filter-btn center-btn" data-center="เชียงใหม่" data-label="🏢 เชียงใหม่" data-count-all="5" data-count-pending="2" data-count-inprogress="3" data-count-shipping="0" style="--btn-color:#ef4444">🏢 เชียงใหม่ (5)</button>
+      <button class="filter-btn center-btn" data-center="สมุทรปราการ" data-label="🏢 สมุทรปราการ" data-count-all="3" data-count-pending="1" data-count-inprogress="2" data-count-shipping="0" style="--btn-color:#8b5cf6">🏢 สมุทรปราการ (3)</button>
+      <button class="filter-btn center-btn" data-center="สุราษฎร์ธานี" data-label="🏢 สุราษฎร์ธานี" data-count-all="2" data-count-pending="2" data-count-inprogress="0" data-count-shipping="0" style="--btn-color:#ec4899">🏢 สุราษฎร์ธานี (2)</button>
+      <button class="filter-btn center-btn" data-center="นครราชสีมา" data-label="🏢 นครราชสีมา" data-count-all="1" data-count-pending="0" data-count-inprogress="1" data-count-shipping="0" style="--btn-color:#14b8a6">🏢 นครราชสีมา (1)</button>
+      <button class="filter-btn center-btn" data-center="ชลบุรี" data-label="🏢 ชลบุรี" data-count-all="1" data-count-pending="1" data-count-inprogress="0" data-count-shipping="0" style="--btn-color:#f97316">🏢 ชลบุรี (1)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="center-grid">
+    
+    <div class="center-card" data-center="📦 🔴 รอจัดส่ง" style="--card-accent:#ef4444">
+      <div class="card-top">
+        <div class="ctr-name">🔴 รอจัดส่ง</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-shrink:0">
+          <span class="ctr-badge">18 งาน</span>
+          <button class="copy-btn" onclick="copyCenter('📦 🔴 รอจัดส่ง', this)">📋 Copy</button>
+        </div>
+      </div>
+      <div class="ticket-list" data-default-view>
+        <div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001133924</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">4 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาตลาดเจ้าพระยา บางใหญ่</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001133829</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">4 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนเพชรเกษม หาดใหญ่</div>
+          <div class="symptom">🛠 Notebook สายไฟชาร์ตแบตชำรุด</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001133821</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">4 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาช้างเผือก เชียงใหม่</div>
+          <div class="symptom">🛠 Mouse ค้าง ไฟติดๆดับๆ</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001133741</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">4 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาจอหอ นครราชสีมา</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134729</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">3 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาวังสะพุง</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001135049</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาหัวหมาก</div>
+          <div class="symptom">🛠 Mouse scroll ไม่ทำงาน</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134959</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาสี่แยกแสงเพชร สุราษฎร์ธานี</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134900</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาท่าอากาศยานดอนเมือง</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป ช่องบริการ  back office</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134898</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาท่าอากาศยานดอนเมือง</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป ช่องบริการ 6</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134896</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาท่าอากาศยานดอนเมือง</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป ช่องบริการ 4</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134894</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาท่าอากาศยานดอนเมือง</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป ช่องบริการ 2</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134893</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาท่าอากาศยานดอนเมือง</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134194</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาอุตรดิตถ์</div>
+          <div class="symptom">🛠 mouse =&gt; ลูกกลิ้ง ใช้งานไม่ได้</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001136353</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบางแค</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001136096</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขานิคมอุตสาหกรรมอมตะนคร ชลบุรี</div>
+          <div class="symptom">🛠 Mouse ไร้สาย คลิกไม่ไป</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001136039</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาแม่น้ำ เกาะสมุย</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001135975</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนรางน้ำ</div>
+          <div class="symptom">🛠 Mouse อืดช้าเปลี่ยนถ่านแล้วไม่หาย</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001135796</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาโลตัส พัทยาใต้</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          
+        </div>
+      </div>
+    </div>
+      
+    <div class="center-card" data-center="📦 🟡 อยู่ระหว่างจัดส่ง" style="--card-accent:#f59e0b">
+      <div class="card-top">
+        <div class="ctr-name">🟡 อยู่ระหว่างจัดส่ง</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-shrink:0">
+          <span class="ctr-badge">12 งาน</span>
+          <button class="copy-btn" onclick="copyCenter('📦 🟡 อยู่ระหว่างจัดส่ง', this)">📋 Copy</button>
+        </div>
+      </div>
+      <div class="ticket-list" data-default-view>
+        <div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001121829</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">19 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนพรหมเทพ อุบลราชธานี</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355866TH" target="_blank">EQ493355866TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001122436</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">18 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขามุกดาหาร</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355883TH" target="_blank">EQ493355883TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001122405</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">18 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาหัวทะเล นครราชสีมา</div>
+          <div class="symptom">🛠 เม้าส์ของ Notebook ไม่สามารถคลิก หรือ ขยับได้</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355870TH" target="_blank">EQ493355870TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001123204</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">17 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาอาคารซันทาวเวอร์ส</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355923TH" target="_blank">EQ493355923TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001126756</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">13 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนฉัตรไชย ลำปาง</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355945TH" target="_blank">EQ493355945TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001126176</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">13 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาสี่แยกสนามบิน เชียงใหม่</div>
+          <div class="symptom">🛠 Mouse เสีย คลิกอะไรไม่ได้เลย</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355937TH" target="_blank">EQ493355937TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001128945</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">10 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนฉัตรไชย ลำปาง</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355985TH" target="_blank">EQ493355985TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001128797</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">10 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาตราด</div>
+          <div class="symptom">🛠 ปากกาtabletชำรุด</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355971TH" target="_blank">EQ493355971TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001129620</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">9 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนสวรรค์วิถี นครสวรรค์</div>
+          <div class="symptom">🛠 ปากกาtabletชำรุด</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493356005TH" target="_blank">EQ493356005TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001130795</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">7 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาหัวทะเล นครราชสีมา</div>
+          <div class="symptom">🛠 ปากกาtabletชำรุด</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493358425TH" target="_blank">EQ493358425TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001130702</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">7 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนเศรษฐกิจ 1 สมุทรสาคร</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493358417TH" target="_blank">EQ493358417TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001131067</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">6 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาเดอะมอลล์ งามวงศ์วาน</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493358434TH" target="_blank">EQ493358434TH</a></div>
+        </div>
+      </div>
+    </div>
+      
+    <div class="center-card" data-center="📦 🟢 จัดส่งสำเร็จ" style="--card-accent:#22c55e">
+      <div class="card-top">
+        <div class="ctr-name">🟢 จัดส่งสำเร็จ</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-shrink:0">
+          <span class="ctr-badge">20 งาน</span>
+          <button class="copy-btn" onclick="copyCenter('📦 🟢 จัดส่งสำเร็จ', this)">📋 Copy</button>
+        </div>
+      </div>
+      <div class="ticket-list" data-default-view>
+        <div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001120599</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">20 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาติดตามงานค่ะ ส่งมาผิดอีกแล้วค่ะ ส่ง</div>
+          <div class="symptom">🛠 เมาส์ไม่สามารถใช้งานได้</div>
+          <div class="shipped">📦 ส่ง 12/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355469TH" target="_blank">EQ493355469TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001122947</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">18 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาเซ็นทรัล เวสต์เกต</div>
+          <div class="symptom">🛠 Mouse ใส่ถ่านแล้วไฟไม่ติด</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355910TH" target="_blank">EQ493355910TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001122739</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">18 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาพัทลุง</div>
+          <div class="symptom">🛠 Mouse ไฟไม่เข้า</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355906TH" target="_blank">EQ493355906TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001122677</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">18 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนโรจนะ อยุธยา</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355897TH" target="_blank">EQ493355897TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001123192</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">17 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาโลตัส นครชัยศรี</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 19/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355659TH" target="_blank">EQ493355659TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001125586</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">14 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาตลาดนิคมอุตสาหกรรมบางปู</div>
+          <div class="symptom">🛠 Mouseสูญหาย</div>
+          <div class="shipped">📦 ส่ง 19/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355720TH" target="_blank">EQ493355720TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001126753</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">13 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาเซ็นทรัล ขอนแก่น</div>
+          <div class="symptom">🛠 Mouse คลิกขวาไม่ได้</div>
+          <div class="shipped">📦 ส่ง 19/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355733TH" target="_blank">EQ493355733TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001127744</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">12 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาแม็กซ์แวลู พัฒนาการ</div>
+          <div class="symptom">🛠 Notebook เวลาชาร์จ กระพริบ เปิด ปิด</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=JD263075941TH" target="_blank">JD263075941TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001127734</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">12 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาเซ็นทรัล ปิ่นเกล้า</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 19/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355755TH" target="_blank">EQ493355755TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001127555</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">12 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนนราธิวาสราชนครินทร์</div>
+          <div class="symptom">🛠 Mouse ไร้สาย เลื่อนไม่ค่อยขึ้น</div>
+          <div class="shipped">📦 ส่ง 19/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355747TH" target="_blank">EQ493355747TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001127495</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">12 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนหน้าเมือง ขอนแก่น</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355954TH" target="_blank">EQ493355954TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001128514</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">11 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาโลตัส ลำลูกกา (คลอง 2)</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป  เลื่อนแล้วไม่ตรงจุดดิ้นไปดิ้นมา เปลี่ยนถ่านแล้วยังไม่หายค่ะ</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355968TH" target="_blank">EQ493355968TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001129681</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">9 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาเอกมัย</div>
+          <div class="symptom">🛠 Mouse ใช้งานไม่ได้ ขยับไม่ไป</div>
+          <div class="shipped">📦 ส่ง 19/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355804TH" target="_blank">EQ493355804TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001130111</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">8 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบิ๊กซี บ้านบึง</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 19/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355818TH" target="_blank">EQ493355818TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001130591</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">7 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาเมืองพล</div>
+          <div class="symptom">🛠 Mouse ชำรุด</div>
+          <div class="shipped">📦 ส่ง 19/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493355821TH" target="_blank">EQ493355821TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001131617</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">6 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาโลตัส วังหิน</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493358451TH" target="_blank">EQ493358451TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001131092</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">6 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนรัตนาธิเบศร์ บางใหญ่</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493358448TH" target="_blank">EQ493358448TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001132422</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">5 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนสุขุมวิท ชลบุรี 1</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493358482TH" target="_blank">EQ493358482TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001132172</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">5 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขา1972 Booth Exchange Phuket 222 ม.6</div>
+          <div class="symptom">🛠 Mouse คลิกไม่ไป</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493358479TH" target="_blank">EQ493358479TH</a></div>
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001132171</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">5 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาแฟชั่นไอส์แลนด์ รามอินทรา</div>
+          <div class="symptom">🛠 Mouse กดไม่ค่อยได้</div>
+          <div class="shipped">📦 ส่ง 20/11/2026 <a href="https://track.thailandpost.co.th/?trackNumber=EQ493358465TH" target="_blank">EQ493358465TH</a></div>
+        </div>
+      </div>
+    </div>
+      
+    <div class="center-card" data-center="รามอินทรา" style="--card-accent:#10b981">
+      <div class="card-top">
+        <div class="ctr-name">🏢 รามอินทรา</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-shrink:0">
+          <span class="ctr-badge">6 งาน</span>
+          <button class="copy-btn" onclick="copyCenter('รามอินทรา', this)">📋 Copy</button>
+        </div>
+      </div>
+      <div class="ticket-list" data-default-view>
+        <div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134607</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">3 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาอ่อนนุช</div>
+          <div class="symptom">🛠 Keyboard ปุ่มแข็ง กดไม่ลง</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001135070</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาหัวหมาก</div>
+          <div class="symptom">🛠 Notebook เปิดมาแล้วค้าง</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001135532</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">1 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาโลตัส ปทุมธานี</div>
+          <div class="symptom">🛠 เข้าระบบไม่ได้  S1,Signature,PCB-webCSR</div>
+          
+        </div>
+<div class="ticket-row" data-status="inprogress">
+          <div class="inc-line">
+            <span class="incs">INCS000001136177</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#10b98122;color:#10b981;border:1px solid #10b98144">🔄 In Progress</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาถนนงามวงศ์วาน</div>
+          <div class="symptom">🛠 monitor =&gt; Monitor หน้าจอเป็นสีเหลืองทั้งจอ เปลี่ยนเป็น Monitor 24&quot; นะครับ ID: 221351 User: Nopparat Teanaid ติดต่อ: 0940506683 สาขาถนนงามวงศ์วาน ชั้น 3 หน่วยบร</div>
+          
+        </div>
+<div class="ticket-row" data-status="inprogress">
+          <div class="inc-line">
+            <span class="incs">INCS000001136165</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#10b98122;color:#10b981;border:1px solid #10b98144">🔄 In Progress</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบางบัวทอง</div>
+          <div class="symptom">🛠 Notebook   เครื่อง restart เอง ค่อนข้างบ่อย</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001135794</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาเซ็นทรัล บางนา</div>
+          <div class="symptom">🛠 แจ้งปัญหาเครื่อง Tablet  แท็บเล็ตค้างใช้งานไม่ได้</div>
+          
+        </div>
+      </div>
+      <div class="ticket-list ship-view" style="display:none">
+        
+      </div>
+    </div>
+      
+    <div class="center-card" data-center="ภูเก็ต" style="--card-accent:#f59e0b">
+      <div class="card-top">
+        <div class="ctr-name">🏢 ภูเก็ต</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-shrink:0">
+          <span class="ctr-badge">5 งาน</span>
+          <button class="copy-btn" onclick="copyCenter('ภูเก็ต', this)">📋 Copy</button>
+        </div>
+      </div>
+      <div class="ticket-list" data-default-view>
+        <div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001131405</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">6 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบูธ จังซีลอน2 ภูเก็ต</div>
+          <div class="symptom">🛠 FXO เครื่องปริ้นสลิป EPSON ปริ้นไม่ออก</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001132534</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">5 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบูธ ท่าอากาศยานภูเก็ต 202</div>
+          <div class="symptom">🛠 FX at Booth จอแสดงเรทเปิดไม่ติด</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001132533</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">5 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบูธ ท่าอากาศยานภูเก็ต 201</div>
+          <div class="symptom">🛠 FX at Booth จอเรทไม่โชว์</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134660</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">3 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาติดตามงานค่ะ**</div>
+          <div class="symptom">🛠 จอแรทสายเชื่อมต่อUSBหลุดขาดออกจากตัวกล่อง</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001135050</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบูธ หาดละไม</div>
+          <div class="symptom">🛠 เครื่องสแกนพาสปอร์ต  ไฟค้าง สแกนไม่ได้ Booth 1853</div>
+          
+        </div>
+      </div>
+      <div class="ticket-list ship-view" style="display:none">
+        
+      </div>
+    </div>
+      
+    <div class="center-card" data-center="เชียงใหม่" style="--card-accent:#ef4444">
+      <div class="card-top">
+        <div class="ctr-name">🏢 เชียงใหม่</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-shrink:0">
+          <span class="ctr-badge">5 งาน</span>
+          <button class="copy-btn" onclick="copyCenter('เชียงใหม่', this)">📋 Copy</button>
+        </div>
+      </div>
+      <div class="ticket-list" data-default-view>
+        <div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001128662</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">11 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาเซ็นทรัล เชียงราย</div>
+          <div class="symptom">🛠 PinPad ไม่สามารถเปลี่ยนรหัสได้</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134612</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">3 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาแม่ฮ่องสอน</div>
+          <div class="symptom">🛠 PCB_RPT เรียกรายงาน ไม่สามารถเปิดไฟล์ได้</div>
+          
+        </div>
+<div class="ticket-row" data-status="inprogress">
+          <div class="inc-line">
+            <span class="incs">INCS000001136391</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#10b98122;color:#10b981;border:1px solid #10b98144">🔄 In Progress</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบิ๊กซี หางดง</div>
+          <div class="symptom">🛠 Network ใช้งานไม่ได้ 1 เครื่อง</div>
+          
+        </div>
+<div class="ticket-row" data-status="inprogress">
+          <div class="inc-line">
+            <span class="incs">INCS000001136378</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#10b98122;color:#10b981;border:1px solid #10b98144">🔄 In Progress</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบิ๊กซี หางดง</div>
+          <div class="symptom">🛠 แจ้งปัญหาเครื่อง PCDesktop เข้าใช้งานไม่ได้</div>
+          
+        </div>
+<div class="ticket-row" data-status="inprogress">
+          <div class="inc-line">
+            <span class="incs">INCS000001136133</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#10b98122;color:#10b981;border:1px solid #10b98144">🔄 In Progress</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาจอมทอง</div>
+          <div class="symptom">🛠 Smart Queue/LCD TV จอTVไม่ออก ไม่ขึ้นสัญญาณภาพ</div>
+          
+        </div>
+      </div>
+      <div class="ticket-list ship-view" style="display:none">
+        
+      </div>
+    </div>
+      
+    <div class="center-card" data-center="สมุทรปราการ" style="--card-accent:#8b5cf6">
+      <div class="card-top">
+        <div class="ctr-name">🏢 สมุทรปราการ</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-shrink:0">
+          <span class="ctr-badge">3 งาน</span>
+          <button class="copy-btn" onclick="copyCenter('สมุทรปราการ', this)">📋 Copy</button>
+        </div>
+      </div>
+      <div class="ticket-list" data-default-view>
+        <div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001113143</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">29 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบูธ ท่าอากาศยานสุวรรณภูมิ 1924 (ขาเข้า) • ศูนย์ช่าง : ศูนย์ส</div>
+          <div class="symptom">🛠 แจ้งปัญหาเครื่อง Tablet ปุ่มทัชสกรีนพิมพ์ข้อความไม่ได้ค่ะ</div>
+          
+        </div>
+<div class="ticket-row" data-status="inprogress">
+          <div class="inc-line">
+            <span class="incs">INCS000001136323</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#10b98122;color:#10b981;border:1px solid #10b98144">🔄 In Progress</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาสุขุมวิท 71</div>
+          <div class="symptom">🛠 PinPad system ปิด</div>
+          
+        </div>
+<div class="ticket-row" data-status="inprogress">
+          <div class="inc-line">
+            <span class="incs">INCS000001136001</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#10b98122;color:#10b981;border:1px solid #10b98144">🔄 In Progress</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาสำเหร่</div>
+          <div class="symptom">🛠 Keyboard ปุ่มแข็ง กดไม่ลง</div>
+          
+        </div>
+      </div>
+      <div class="ticket-list ship-view" style="display:none">
+        
+      </div>
+    </div>
+      
+    <div class="center-card" data-center="สุราษฎร์ธานี" style="--card-accent:#ec4899">
+      <div class="card-top">
+        <div class="ctr-name">🏢 สุราษฎร์ธานี</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-shrink:0">
+          <span class="ctr-badge">2 งาน</span>
+          <button class="copy-btn" onclick="copyCenter('สุราษฎร์ธานี', this)">📋 Copy</button>
+        </div>
+      </div>
+      <div class="ticket-list" data-default-view>
+        <div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134345</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">3 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขานครศรีธรรมราช</div>
+          <div class="symptom">🛠 แจ้งปัญหาเครื่อง Tablet  เปิดบัญชี เครื่องเปิดไม่ติด ค้าง</div>
+          
+        </div>
+<div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134041</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">3 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบูธ ถนนเลียบหาดเฉวง</div>
+          <div class="symptom">🛠 Printer EPSON   ปริ้นสลิปไม่ติด</div>
+          
+        </div>
+      </div>
+      <div class="ticket-list ship-view" style="display:none">
+        
+      </div>
+    </div>
+      
+    <div class="center-card" data-center="นครราชสีมา" style="--card-accent:#14b8a6">
+      <div class="card-top">
+        <div class="ctr-name">🏢 นครราชสีมา</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-shrink:0">
+          <span class="ctr-badge">1 งาน</span>
+          <button class="copy-btn" onclick="copyCenter('นครราชสีมา', this)">📋 Copy</button>
+        </div>
+      </div>
+      <div class="ticket-list" data-default-view>
+        <div class="ticket-row" data-status="inprogress">
+          <div class="inc-line">
+            <span class="incs">INCS000001136250</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#10b98122;color:#10b981;border:1px solid #10b98144">🔄 In Progress</span>
+              <span class="days-badge">0 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาบุรีรัมย์</div>
+          <div class="symptom">🛠 Smart Card Reader ไม่อ่านบัตร สายขาด</div>
+          
+        </div>
+      </div>
+      <div class="ticket-list ship-view" style="display:none">
+        
+      </div>
+    </div>
+      
+    <div class="center-card" data-center="ชลบุรี" style="--card-accent:#f97316">
+      <div class="card-top">
+        <div class="ctr-name">🏢 ชลบุรี</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-shrink:0">
+          <span class="ctr-badge">1 งาน</span>
+          <button class="copy-btn" onclick="copyCenter('ชลบุรี', this)">📋 Copy</button>
+        </div>
+      </div>
+      <div class="ticket-list" data-default-view>
+        <div class="ticket-row" data-status="pending">
+          <div class="inc-line">
+            <span class="incs">INCS000001134841</span>
+            <span style="display:flex;gap:0.25rem;align-items:center">
+              <span class="status-badge" style="background:#64748b22;color:#64748b;border:1px solid #64748b44">⏳ Pending</span>
+              <span class="days-badge">2 วัน</span>
+            </span>
+          </div>
+          <div class="branch">📍 สาขาพัทยากลาง</div>
+          <div class="symptom">🛠 Monitor หน้าจอเสียเป็นสีม่วง</div>
+          
+        </div>
+      </div>
+      <div class="ticket-list ship-view" style="display:none">
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    vSpace Report · 📋 vSpace — สรุปงานประจำวัน · 23/11/2026 11:30 น.
+  </div>
+</div>
+
+<script>
+const COPY_DATA = {
+      "📦 🔴 รอจัดส่ง": "📦 🔴 รอจัดส่ง (18 งาน)\n\n• `INCS000001133924` ⏱ 4 วัน  [Pending]\n  📍 สาขาตลาดเจ้าพระยา บางใหญ่\n  🛠 Mouse คลิกไม่ไป\n\n• `INCS000001133829` ⏱ 4 วัน  [Pending]\n  📍 สาขาถนนเพชรเกษม หาดใหญ่\n  🛠 Notebook สายไฟชาร์ตแบตชำรุด\n\n• `INCS000001133821` ⏱ 4 วัน  [Pending]\n  📍 สาขาช้างเผือก เชียงใหม่\n  🛠 Mouse ค้าง ไฟติดๆดับๆ\n\n• `INCS000001133741` ⏱ 4 วัน  [Pending]\n  📍 สาขาจอหอ นครราชสีมา\n  🛠 Mouse คลิกไม่ไป\n\n• `INCS000001134729` ⏱ 3 วัน  [Pending]\n  📍 สาขาวังสะพุง\n  🛠 Mouse คลิกไม่ไป\n\n• `INCS000001135049` ⏱ 2 วัน  [Pending]\n  📍 สาขาหัวหมาก\n  🛠 Mouse scroll ไม่ทำงาน\n\n• `INCS000001134959` ⏱ 2 วัน  [Pending]\n  📍 สาขาสี่แยกแสงเพชร สุราษฎร์ธานี\n  🛠 Mouse คลิกไม่ไป\n\n• `INCS000001134900` ⏱ 2 วัน  [Pending]\n  📍 สาขาท่าอากาศยานดอนเมือง\n  🛠 Mouse คลิกไม่ไป ช่องบริการ  back office\n\n• `INCS000001134898` ⏱ 2 วัน  [Pending]\n  📍 สาขาท่าอากาศยานดอนเมือง\n  🛠 Mouse คลิกไม่ไป ช่องบริการ 6\n\n• `INCS000001134896` ⏱ 2 วัน  [Pending]\n  📍 สาขาท่าอากาศยานดอนเมือง\n  🛠 Mouse คลิกไม่ไป ช่องบริการ 4\n\n• `INCS000001134894` ⏱ 2 วัน  [Pending]\n  📍 สาขาท่าอากาศยานดอนเมือง\n  🛠 Mouse คลิกไม่ไป ช่องบริการ 2\n\n• `INCS000001134893` ⏱ 2 วัน  [Pending]\n  📍 สาขาท่าอากาศยานดอนเมือง\n  🛠 Mouse คลิกไม่ไป\n\n• `INCS000001134194` ⏱ 2 วัน  [Pending]\n  📍 สาขาอุตรดิตถ์\n  🛠 mouse => ลูกกลิ้ง ใช้งานไม่ได้\n\n• `INCS000001136353` ⏱ 0 วัน  [Pending]\n  📍 สาขาบางแค\n  🛠 Mouse คลิกไม่ไป\n\n• `INCS000001136096` ⏱ 0 วัน  [Pending]\n  📍 สาขานิคมอุตสาหกรรมอมตะนคร ชลบุรี\n  🛠 Mouse ไร้สาย คลิกไม่ไป\n\n• `INCS000001136039` ⏱ 0 วัน  [Pending]\n  📍 สาขาแม่น้ำ เกาะสมุย\n  🛠 Mouse คลิกไม่ไป\n\n• `INCS000001135975` ⏱ 0 วัน  [Pending]\n  📍 สาขาถนนรางน้ำ\n  🛠 Mouse อืดช้าเปลี่ยนถ่านแล้วไม่หาย\n\n• `INCS000001135796` ⏱ 0 วัน  [Pending]\n  📍 สาขาโลตัส พัทยาใต้\n  🛠 Mouse คลิกไม่ไป",
+      "📦 🟡 อยู่ระหว่างจัดส่ง": "📦 🟡 อยู่ระหว่างจัดส่ง (12 งาน)\n\n• `INCS000001121829` ⏱ 19 วัน  [Pending]\n  📍 สาขาถนนพรหมเทพ อุบลราชธานี\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493355866TH)\n\n• `INCS000001122436` ⏱ 18 วัน  [Pending]\n  📍 สาขามุกดาหาร\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493355883TH)\n\n• `INCS000001122405` ⏱ 18 วัน  [Pending]\n  📍 สาขาหัวทะเล นครราชสีมา\n  🛠 เม้าส์ของ Notebook ไม่สามารถคลิก หรือ ขยับได้\n  📦 ส่ง 20/11/2026 (EMS: EQ493355870TH)\n\n• `INCS000001123204` ⏱ 17 วัน  [Pending]\n  📍 สาขาอาคารซันทาวเวอร์ส\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493355923TH)\n\n• `INCS000001126756` ⏱ 13 วัน  [Pending]\n  📍 สาขาถนนฉัตรไชย ลำปาง\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493355945TH)\n\n• `INCS000001126176` ⏱ 13 วัน  [Pending]\n  📍 สาขาสี่แยกสนามบิน เชียงใหม่\n  🛠 Mouse เสีย คลิกอะไรไม่ได้เลย\n  📦 ส่ง 20/11/2026 (EMS: EQ493355937TH)\n\n• `INCS000001128945` ⏱ 10 วัน  [Pending]\n  📍 สาขาถนนฉัตรไชย ลำปาง\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493355985TH)\n\n• `INCS000001128797` ⏱ 10 วัน  [Pending]\n  📍 สาขาตราด\n  🛠 ปากกาtabletชำรุด\n  📦 ส่ง 20/11/2026 (EMS: EQ493355971TH)\n\n• `INCS000001129620` ⏱ 9 วัน  [Pending]\n  📍 สาขาถนนสวรรค์วิถี นครสวรรค์\n  🛠 ปากกาtabletชำรุด\n  📦 ส่ง 20/11/2026 (EMS: EQ493356005TH)\n\n• `INCS000001130795` ⏱ 7 วัน  [Pending]\n  📍 สาขาหัวทะเล นครราชสีมา\n  🛠 ปากกาtabletชำรุด\n  📦 ส่ง 20/11/2026 (EMS: EQ493358425TH)\n\n• `INCS000001130702` ⏱ 7 วัน  [Pending]\n  📍 สาขาถนนเศรษฐกิจ 1 สมุทรสาคร\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493358417TH)\n\n• `INCS000001131067` ⏱ 6 วัน  [Pending]\n  📍 สาขาเดอะมอลล์ งามวงศ์วาน\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493358434TH)",
+      "📦 🟢 จัดส่งสำเร็จ": "📦 🟢 จัดส่งสำเร็จ (20 งาน)\n\n• `INCS000001120599` ⏱ 20 วัน  [Pending]\n  📍 สาขาติดตามงานค่ะ ส่งมาผิดอีกแล้วค่ะ ส่ง\n  🛠 เมาส์ไม่สามารถใช้งานได้\n  📦 ส่ง 12/11/2026 (EMS: EQ493355469TH)\n\n• `INCS000001122947` ⏱ 18 วัน  [Pending]\n  📍 สาขาเซ็นทรัล เวสต์เกต\n  🛠 Mouse ใส่ถ่านแล้วไฟไม่ติด\n  📦 ส่ง 20/11/2026 (EMS: EQ493355910TH)\n\n• `INCS000001122739` ⏱ 18 วัน  [Pending]\n  📍 สาขาพัทลุง\n  🛠 Mouse ไฟไม่เข้า\n  📦 ส่ง 20/11/2026 (EMS: EQ493355906TH)\n\n• `INCS000001122677` ⏱ 18 วัน  [Pending]\n  📍 สาขาถนนโรจนะ อยุธยา\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493355897TH)\n\n• `INCS000001123192` ⏱ 17 วัน  [Pending]\n  📍 สาขาโลตัส นครชัยศรี\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 19/11/2026 (EMS: EQ493355659TH)\n\n• `INCS000001125586` ⏱ 14 วัน  [Pending]\n  📍 สาขาตลาดนิคมอุตสาหกรรมบางปู\n  🛠 Mouseสูญหาย\n  📦 ส่ง 19/11/2026 (EMS: EQ493355720TH)\n\n• `INCS000001126753` ⏱ 13 วัน  [Pending]\n  📍 สาขาเซ็นทรัล ขอนแก่น\n  🛠 Mouse คลิกขวาไม่ได้\n  📦 ส่ง 19/11/2026 (EMS: EQ493355733TH)\n\n• `INCS000001127744` ⏱ 12 วัน  [Pending]\n  📍 สาขาแม็กซ์แวลู พัฒนาการ\n  🛠 Notebook เวลาชาร์จ กระพริบ เปิด ปิด\n  📦 ส่ง 20/11/2026 (EMS: JD263075941TH)\n\n• `INCS000001127734` ⏱ 12 วัน  [Pending]\n  📍 สาขาเซ็นทรัล ปิ่นเกล้า\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 19/11/2026 (EMS: EQ493355755TH)\n\n• `INCS000001127555` ⏱ 12 วัน  [Pending]\n  📍 สาขาถนนนราธิวาสราชนครินทร์\n  🛠 Mouse ไร้สาย เลื่อนไม่ค่อยขึ้น\n  📦 ส่ง 19/11/2026 (EMS: EQ493355747TH)\n\n• `INCS000001127495` ⏱ 12 วัน  [Pending]\n  📍 สาขาถนนหน้าเมือง ขอนแก่น\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493355954TH)\n\n• `INCS000001128514` ⏱ 11 วัน  [Pending]\n  📍 สาขาโลตัส ลำลูกกา (คลอง 2)\n  🛠 Mouse คลิกไม่ไป  เลื่อนแล้วไม่ตรงจุดดิ้นไปดิ้นมา เปลี่ยนถ่านแล้วยังไม่หายค่ะ\n  📦 ส่ง 20/11/2026 (EMS: EQ493355968TH)\n\n• `INCS000001129681` ⏱ 9 วัน  [Pending]\n  📍 สาขาเอกมัย\n  🛠 Mouse ใช้งานไม่ได้ ขยับไม่ไป\n  📦 ส่ง 19/11/2026 (EMS: EQ493355804TH)\n\n• `INCS000001130111` ⏱ 8 วัน  [Pending]\n  📍 สาขาบิ๊กซี บ้านบึง\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 19/11/2026 (EMS: EQ493355818TH)\n\n• `INCS000001130591` ⏱ 7 วัน  [Pending]\n  📍 สาขาเมืองพล\n  🛠 Mouse ชำรุด\n  📦 ส่ง 19/11/2026 (EMS: EQ493355821TH)\n\n• `INCS000001131617` ⏱ 6 วัน  [Pending]\n  📍 สาขาโลตัส วังหิน\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493358451TH)\n\n• `INCS000001131092` ⏱ 6 วัน  [Pending]\n  📍 สาขาถนนรัตนาธิเบศร์ บางใหญ่\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493358448TH)\n\n• `INCS000001132422` ⏱ 5 วัน  [Pending]\n  📍 สาขาถนนสุขุมวิท ชลบุรี 1\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493358482TH)\n\n• `INCS000001132172` ⏱ 5 วัน  [Pending]\n  📍 สาขา1972 Booth Exchange Phuket 222 ม.6\n  🛠 Mouse คลิกไม่ไป\n  📦 ส่ง 20/11/2026 (EMS: EQ493358479TH)\n\n• `INCS000001132171` ⏱ 5 วัน  [Pending]\n  📍 สาขาแฟชั่นไอส์แลนด์ รามอินทรา\n  🛠 Mouse กดไม่ค่อยได้\n  📦 ส่ง 20/11/2026 (EMS: EQ493358465TH)",
+      "รามอินทรา": "🏢 รามอินทรา (6 งาน)\n\n• `INCS000001134607` ⏱ 3 วัน  [Pending]\n  📍 สาขาอ่อนนุช\n  🛠 Keyboard ปุ่มแข็ง กดไม่ลง\n\n• `INCS000001135070` ⏱ 2 วัน  [Pending]\n  📍 สาขาหัวหมาก\n  🛠 Notebook เปิดมาแล้วค้าง\n\n• `INCS000001135532` ⏱ 1 วัน  [Pending]\n  📍 สาขาโลตัส ปทุมธานี\n  🛠 เข้าระบบไม่ได้  S1,Signature,PCB-webCSR\n\n• `INCS000001136177` ⏱ 0 วัน  [In Progress]\n  📍 สาขาถนนงามวงศ์วาน\n  🛠 monitor => Monitor หน้าจอเป็นสีเหลืองทั้งจอ เปลี่ยนเป็น Monitor 24\" นะครับ ID: 221351 User: Nopparat Teanaid ติดต่อ: 0940506683 สาขาถนนงามวงศ์วาน ชั้น 3 หน่วยบร\n\n• `INCS000001136165` ⏱ 0 วัน  [In Progress]\n  📍 สาขาบางบัวทอง\n  🛠 Notebook   เครื่อง restart เอง ค่อนข้างบ่อย\n\n• `INCS000001135794` ⏱ 0 วัน  [Pending]\n  📍 สาขาเซ็นทรัล บางนา\n  🛠 แจ้งปัญหาเครื่อง Tablet  แท็บเล็ตค้างใช้งานไม่ได้",
+      "ภูเก็ต": "🏢 ภูเก็ต (5 งาน)\n\n• `INCS000001131405` ⏱ 6 วัน  [Pending]\n  📍 สาขาบูธ จังซีลอน2 ภูเก็ต\n  🛠 FXO เครื่องปริ้นสลิป EPSON ปริ้นไม่ออก\n\n• `INCS000001132534` ⏱ 5 วัน  [Pending]\n  📍 สาขาบูธ ท่าอากาศยานภูเก็ต 202\n  🛠 FX at Booth จอแสดงเรทเปิดไม่ติด\n\n• `INCS000001132533` ⏱ 5 วัน  [Pending]\n  📍 สาขาบูธ ท่าอากาศยานภูเก็ต 201\n  🛠 FX at Booth จอเรทไม่โชว์\n\n• `INCS000001134660` ⏱ 3 วัน  [Pending]\n  📍 สาขาติดตามงานค่ะ**\n  🛠 จอแรทสายเชื่อมต่อUSBหลุดขาดออกจากตัวกล่อง\n\n• `INCS000001135050` ⏱ 2 วัน  [Pending]\n  📍 สาขาบูธ หาดละไม\n  🛠 เครื่องสแกนพาสปอร์ต  ไฟค้าง สแกนไม่ได้ Booth 1853",
+      "เชียงใหม่": "🏢 เชียงใหม่ (5 งาน)\n\n• `INCS000001128662` ⏱ 11 วัน  [Pending]\n  📍 สาขาเซ็นทรัล เชียงราย\n  🛠 PinPad ไม่สามารถเปลี่ยนรหัสได้\n\n• `INCS000001134612` ⏱ 3 วัน  [Pending]\n  📍 สาขาแม่ฮ่องสอน\n  🛠 PCB_RPT เรียกรายงาน ไม่สามารถเปิดไฟล์ได้\n\n• `INCS000001136391` ⏱ 0 วัน  [In Progress]\n  📍 สาขาบิ๊กซี หางดง\n  🛠 Network ใช้งานไม่ได้ 1 เครื่อง\n\n• `INCS000001136378` ⏱ 0 วัน  [In Progress]\n  📍 สาขาบิ๊กซี หางดง\n  🛠 แจ้งปัญหาเครื่อง PCDesktop เข้าใช้งานไม่ได้\n\n• `INCS000001136133` ⏱ 0 วัน  [In Progress]\n  📍 สาขาจอมทอง\n  🛠 Smart Queue/LCD TV จอTVไม่ออก ไม่ขึ้นสัญญาณภาพ",
+      "สมุทรปราการ": "🏢 สมุทรปราการ (3 งาน)\n\n• `INCS000001113143` ⏱ 29 วัน  [Pending]\n  📍 สาขาบูธ ท่าอากาศยานสุวรรณภูมิ 1924 (ขาเข้า) • ศูนย์ช่าง : ศูนย์ส\n  🛠 แจ้งปัญหาเครื่อง Tablet ปุ่มทัชสกรีนพิมพ์ข้อความไม่ได้ค่ะ\n\n• `INCS000001136323` ⏱ 0 วัน  [In Progress]\n  📍 สาขาสุขุมวิท 71\n  🛠 PinPad system ปิด\n\n• `INCS000001136001` ⏱ 0 วัน  [In Progress]\n  📍 สาขาสำเหร่\n  🛠 Keyboard ปุ่มแข็ง กดไม่ลง",
+      "สุราษฎร์ธานี": "🏢 สุราษฎร์ธานี (2 งาน)\n\n• `INCS000001134345` ⏱ 3 วัน  [Pending]\n  📍 สาขานครศรีธรรมราช\n  🛠 แจ้งปัญหาเครื่อง Tablet  เปิดบัญชี เครื่องเปิดไม่ติด ค้าง\n\n• `INCS000001134041` ⏱ 3 วัน  [Pending]\n  📍 สาขาบูธ ถนนเลียบหาดเฉวง\n  🛠 Printer EPSON   ปริ้นสลิปไม่ติด",
+      "นครราชสีมา": "🏢 นครราชสีมา (1 งาน)\n\n• `INCS000001136250` ⏱ 0 วัน  [In Progress]\n  📍 สาขาบุรีรัมย์\n  🛠 Smart Card Reader ไม่อ่านบัตร สายขาด",
+      "ชลบุรี": "🏢 ชลบุรี (1 งาน)\n\n• `INCS000001134841` ⏱ 2 วัน  [Pending]\n  📍 สาขาพัทยากลาง\n  🛠 Monitor หน้าจอเสียเป็นสีม่วง",
+    };
+
+const SHIPPING_CENTER = '📦 งานจัดส่งอุปกรณ์';
+let activeStatus = 'all';
+let activeCenter = 'all';
+
+function applyFilters() {
+  document.querySelectorAll('.center-card').forEach(card => {
+    const center = card.dataset.center;
+    const isShippingSubCenter = center.startsWith('📦');
+    const isShippingCenter = center === SHIPPING_CENTER;
+    const matchCenter = activeCenter === 'all' || center === activeCenter ||
+                        (activeCenter === SHIPPING_CENTER && isShippingSubCenter);
+
+    if (!matchCenter) {
+      card.classList.add('hidden');
+      return;
+    }
+
+    const defaultView = card.querySelector('[data-default-view]');
+    const shipView = card.querySelector('.ship-view');
+
+    if (isShippingCenter) {
+      // Shipping center always shows ship-view with sub-status grouping
+      if (defaultView) defaultView.style.display = 'none';
+      if (shipView) shipView.style.display = '';
+    } else {
+      if (defaultView) defaultView.style.display = '';
+      if (shipView) shipView.style.display = 'none';
+    }
+
+    let hasVisible = false;
+    let visibleCount = 0;
+    card.querySelectorAll('.ticket-row').forEach(row => {
+      const matchStatus = activeStatus === 'all' || row.dataset.status === activeStatus;
+      row.classList.toggle('hidden', !matchStatus);
+      if (matchStatus) {
+        hasVisible = true;
+        visibleCount++;
+      }
+    });
+
+    const badge = card.querySelector('.ctr-badge');
+    if (badge) {
+      badge.textContent = `${visibleCount} งาน`;
+    }
+
+    // Hide empty shipping sub-sections after status filter (only for legacy single shipping card)
+    card.querySelectorAll('.ship-sub').forEach(sub => {
+      const visibleRows = sub.querySelectorAll('.ticket-row:not(.hidden)');
+      sub.classList.toggle('hidden', visibleRows.length === 0);
+    });
+
+    card.classList.toggle('hidden', !hasVisible);
+  });
+}
+
+function updateCenterButtons() {
+  const key = 'count' + activeStatus.charAt(0).toUpperCase() + activeStatus.slice(1);
+  document.querySelectorAll('.center-btn').forEach(btn => {
+    const count = parseInt(btn.dataset[key] || '0');
+    const label = btn.dataset.label || btn.textContent.split(' (')[0];
+    btn.textContent = `${label} (${count})`;
+    const isAll = btn.dataset.center === 'all';
+    btn.classList.toggle('hidden', !isAll && count === 0);
+  });
+  // Reset to "all" if current center has 0 count for new status
+  const activeBtn = Array.from(document.querySelectorAll('.center-btn')).find(b => b.dataset.center === activeCenter);
+  if (activeBtn) {
+    const activeCount = parseInt(activeBtn.dataset[key] || '0');
+    if (activeCount === 0 && activeCenter !== 'all') {
+      document.querySelectorAll('.center-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.center-btn[data-center="all"]').classList.add('active');
+      activeCenter = 'all';
+    }
+  }
+}
+
+document.querySelectorAll('.status-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    activeStatus = this.dataset.status;
+    // Reveal secondary center bar + label on first primary click
+    document.querySelectorAll('.center-panel').forEach(el => el.classList.remove('hidden'));
+    updateCenterButtons();
+    applyFilters();
+  });
+});
+
+document.querySelectorAll('.center-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.center-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    activeCenter = this.dataset.center;
+    applyFilters();
+  });
+});
+
+async function copyCenter(key, btn) {
+  const card = btn.closest('.center-card');
+  let text = '';
+
+  if (card) {
+    const title = card.querySelector('.ctr-name') ? card.querySelector('.ctr-name').textContent.trim() : key;
+    const visibleRows = Array.from(card.querySelectorAll('.ticket-row:not(.hidden)'));
+    const count = visibleRows.length;
+    const lines = [`${title} (${count} งาน)`];
+
+    visibleRows.forEach(row => {
+      lines.push('');
+      const inc = row.querySelector('.incs') ? row.querySelector('.incs').textContent.trim() : '';
+      const days = row.querySelector('.days-badge') ? row.querySelector('.days-badge').textContent.trim() : '';
+      const status = row.querySelector('.status-badge') ? row.querySelector('.status-badge').textContent.trim() : '';
+      const branch = row.querySelector('.branch') ? row.querySelector('.branch').textContent.trim() : '';
+      const symptom = row.querySelector('.symptom') ? row.querySelector('.symptom').textContent.trim() : '';
+      const shipped = row.querySelector('.shipped') ? row.querySelector('.shipped').textContent.trim() : '';
+
+      let incLine = `• \`${inc}\` ⏱️ ${days}`;
+      if (status && !status.includes('Completed')) {
+        const cleanStatus = status.replace(/^[⏳🔄✅❓]\s*/, '');
+        incLine += `  [${cleanStatus}]`;
+      }
+      lines.push(incLine);
+      if (branch) lines.push(`  ${branch}`);
+      if (symptom) lines.push(`  ${symptom}`);
+      if (shipped) lines.push(`  ${shipped}`);
+    });
+    text = lines.join('\n');
+  }
+
+  if (!text) {
+    text = COPY_DATA[key] || '';
+  }
+  let copied = false;
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text); copied = true;
+    }
+  } catch(e) {}
+  if (!copied) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      copied = document.execCommand('copy'); document.body.removeChild(ta);
+    } catch(e) {}
+  }
+  if (copied) {
+    const orig = btn.textContent; btn.textContent = '✅'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+  } else {
+    showCopyModal(key, text);
+  }
+}
+
+function showCopyModal(key, text) {
+  let modal = document.getElementById('copy-modal');
+  if (!modal) {
+    modal = document.createElement('div'); modal.id = 'copy-modal'; modal.className = 'copy-modal';
+    modal.innerHTML = '<div class="copy-modal-box"><div class="copy-modal-header"><span class="copy-modal-title">📋 Copy: <span id="cm-title"></span></span><button class="copy-modal-close" onclick="closeCopyModal()">✕</button></div><div class="copy-modal-hint">⚠️ Browser block auto-copy. <b>Ctrl+A</b> แล้ว <b>Ctrl+C</b></div><textarea id="cm-textarea" class="copy-modal-text" readonly></textarea><div class="copy-modal-actions"><button class="copy-modal-btn" onclick="selectAllCopyText()">📋 Select All</button><button class="copy-modal-btn primary" onclick="closeCopyModal()">ปิด</button></div></div>';
+    document.body.appendChild(modal);
+  }
+  document.getElementById('cm-title').textContent = key;
+  document.getElementById('cm-textarea').value = text;
+  modal.classList.add('show');
+  setTimeout(() => { const ta = document.getElementById('cm-textarea'); ta.focus(); ta.select(); }, 50);
+}
+function closeCopyModal() { const m = document.getElementById('copy-modal'); if(m) m.classList.remove('show'); }
+function selectAllCopyText() { const ta = document.getElementById('cm-textarea'); ta.focus(); ta.select(); try { document.execCommand('copy'); } catch(e){} }
+document.addEventListener('click', function(e) { const m = document.getElementById('copy-modal'); if(m && m.classList.contains('show') && e.target===m) closeCopyModal(); });
+</script>
+</body>
+</html>
